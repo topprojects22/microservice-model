@@ -6,19 +6,21 @@ import {ModelsModule} from "./models/models.module";
 import { PrismaService } from './prisma.service';
 
 @Module({
-  imports: [ConfigModule.forRoot(),
-    ThrottlerModule.forRootAsync({
-      imports: [ConfigModule],
-      inject: [ConfigService],
-      useFactory: (config: ConfigService): any => ({
-        throttler: [{
-          ttl: config.get('THROTTLE_TTL'),
-          limit: config.get('THROTTLE_LIMIT'),
-        }]
-      }),
-    }),
-    ModelsModule,],
-  controllers: [],
-  providers: [PrismaService],
+    imports: [
+        ConfigModule.forRoot(),
+        ThrottlerModule.forRootAsync({
+            imports: [ConfigModule],
+            inject: [ConfigService],
+            useFactory: (config: ConfigService) => [
+                {
+                  ttl: config.get('THROTTLE_TTL'),
+                  limit: config.get('THROTTLE_LIMIT'),
+                },
+            ],
+        }),
+        ModelsModule,
+    ],
+    controllers: [],
+    providers: [PrismaService],
 })
 export class AppModule {}

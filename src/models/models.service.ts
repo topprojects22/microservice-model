@@ -1,10 +1,12 @@
 import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import * as tf from '@tensorflow/tfjs-node';
-import { StorageService } from '../storage/storage.service';
+// import { StorageService } from '../storage/storage.service';
 import { PredictRequestDto, PredictResponseDto } from './dto/predict.dto';
 import * as os from 'os';
 import * as path from 'path';
 import * as fs from 'fs/promises';
+import { createReadStream } from 'fs';
+import { join } from 'path';
 
 import {PrismaService} from "../prisma.service";
 
@@ -15,7 +17,7 @@ export class ModelsService {
 
     constructor(
         private readonly prisma: PrismaService,
-        private storageService: StorageService
+        // private storageService: StorageService
     ) {
         this.initializeTmpDir();
     }
@@ -29,7 +31,10 @@ export class ModelsService {
             await this.prisma.neuralModel.findFirst({ where: { id: +modelId } });
         if (!model) throw new Error('Model not found');
 
-        return this.storageService.getModelFile(model.filePath);
+        const file = createReadStream(join(process.cwd(), './model/package.json'));
+
+        // return this.storageService.getModelFile(model.filePath);
+        return file.read();
     }
 
     private async cacheModel(modelId: string): Promise<tf.LayersModel> {

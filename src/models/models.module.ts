@@ -11,7 +11,11 @@ import {ConfigService} from "@nestjs/config";
 @Module({
     imports: [],
     controllers: [ModelsController],
-    providers: [ModelsService, StorageService, ConfigService, PrismaService, {
+    providers: [
+        // StorageService,
+        ModelsService,
+        ConfigService,
+        PrismaService, {
         provide: APP_GUARD,
         useClass: ThrottlerGuard,
     },],
